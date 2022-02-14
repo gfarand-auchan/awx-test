@@ -1,0 +1,12 @@
+[mut_all:children]
+mut_bdd
+
+[mut_bdd:children]
+hpd_bdd
+qlf_bdd
+
+[hpd_bdd]
+hpdwbddmut01.sncoia.lan
+
+[qlf_bdd]
+qlfwbddmut01.sncoia.lan

@@ -1,0 +1,74 @@
+- name: Stop weblogic RMS
+  hosts: r16_rms
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - stop_weblogic
+  tags: stop_rms
+
+- name: import BDD RMS
+  hosts: r16_bdd_mut
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - import_rms
+  tags: import_rms
+
+- name: import BDD DAS
+  hosts: r16_bdd_das
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - import_das
+
+- name: "[MUT] stop gg mut"
+  hosts: r16_bdd_mut
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - stop_goldengate
+
+- name: "[DAS] stop gg"
+  hosts: r16_bdd_das
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - stop_goldengate
+
+- name: "reinit gg"
+  hosts: r16_bdd_mut
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - refresh_goldengate
+
+- name: Start weblogic
+  hosts: r16_rms
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+  roles:
+    - start_weblogic
+  tags: start_rms
+
+- name: restart rms_server
+  hosts: r16_rms
+  remote_user: auchan-admin
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: Stop service wls_rms if not stopped
+    systemd:
+      name: wls_rms.server
+      state: stopped
+  - name: Start service wls_rms if not started
+    systemd:
+      name: wls_rms.server
+      state: started
